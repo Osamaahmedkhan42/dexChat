@@ -10,25 +10,25 @@ class Chat extends React.Component {
         this.state = {
             chat_user: {},
             chat: [],
-            message: []
+            message: [],
+            pchat:[]
         }
     }
 
     chat = (user) => {
         this.setState({
-            chat_user: user
+            chat_user: user,
+           
         })
 
         let cu_user= this.props.current_user
         let chat_user = this.state.chat_user
 
         let merged_uid = this.uid_merge(cu_user.uid,user.uid);
-        console.log('hammad',user.uid)
-        console.log('osama',cu_user.uid)
-        console.log('uid___WARS',cu_user.uid)
-        console.log('merged_uid>>>',merged_uid)
+        
 
         this.get_messages(merged_uid)
+        this.check_state()
 
     }
 
@@ -56,25 +56,27 @@ class Chat extends React.Component {
 
 
 
-        // this.state.chat.push({
-        //     message : this.state.message
-        // })
-
-        // this.setState({
-        //     chats: this.state.chats,
-        //     message : ''
-        // })
-
     }
 
     get_messages=(uid)=>{
         firebase.database().ref('/').child(`chat/${uid}`).on('child_added',(message)=>{
+
+            console.log('BEFORE>>',this.state.chat)
             this.state.chat.push(message.val())
+            console.log('AFTER>>',this.state.chat)
+           
             this.setState({
-                chat:this.state.chat,
+                pchat:this.state.chat,
+                chat:[],
+              
                 message : ''
             })
         })
+    }
+
+    check_state=()=>{
+        console.log(this.state)
+
     }
 
     componentDidMount() {
@@ -87,11 +89,8 @@ class Chat extends React.Component {
     render() {
 
 
-        console.log('propsChat=>', this.props.users)
+       
         let user = this.props.current_user
-
-        console.log('thistaet==>s', this.state)
-        console.log('asdCU',this.props.current_user)
 
         return (
             <div>
@@ -103,6 +102,7 @@ class Chat extends React.Component {
                 <button onClick={() => this.props.dum_data()}>adding dummy</button>
                 <button onClick={() => console.log(this.props)}>PRops</button>
                 <button onClick={() => this.props.get_user()}>get user</button>
+                <button onClick={() => this.check_state()}>state</button>
                 {/* <button onClick={(e)=>console.log(e.target.value)}>button</button> */}
 
                 <div style={{ display: "flex" }}>
@@ -123,7 +123,7 @@ class Chat extends React.Component {
                                 
                                 <h4>{this.state.chat_user.name}</h4>
                                 <ul>
-                                {this.state.chat.map((v,i)=>{
+                                {this.state.pchat.map((v,i)=>{
                                     return <li  style={{color : v.uid === user.uid ? 'red' :'green'}}key={i}>{v.message}</li>
                                 })}
 
