@@ -18,6 +18,7 @@ class Chat extends React.Component {
     chat = (user) => {
         this.setState({
             chat_user: user,
+            pchat:[]
            
         })
 
@@ -41,6 +42,8 @@ class Chat extends React.Component {
     }
 
     send_message=()=>{
+
+       
        
 
         let user= this.props.current_user
@@ -53,20 +56,31 @@ class Chat extends React.Component {
             name :user.name,
             uid:user.uid
         })
+         this.setState({
+             chat:[],
+            pchat:[]
+            
+         })
+        this.get_messages(merged_uid);
 
 
 
     }
 
     get_messages=(uid)=>{
+        let chatto = []
         firebase.database().ref('/').child(`chat/${uid}`).on('child_added',(message)=>{
 
-            console.log('BEFORE>>',this.state.chat)
-            this.state.chat.push(message.val())
+            //
+            
+            chatto.push(message.val())
+            //
+            console.log('chatto',chatto)
+//this.state.chat.push(message.val())
             console.log('AFTER>>',this.state.chat)
            
             this.setState({
-                pchat:this.state.chat,
+                pchat:chatto,
                 chat:[],
               
                 message : ''
